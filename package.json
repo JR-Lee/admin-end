@@ -1,0 +1,44 @@
+{
+  "name": "admin-end",
+  "version": "1.0.0",
+  "description": "博客系统后端",
+  "main": "main.ts",
+  "scripts": {
+    "dev": "ts-node-dev --clear --respawn main.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JR-Lee/admin-end.git"
+  },
+  "keywords": [
+    "node",
+    "typescript",
+    "koa2"
+  ],
+  "author": "JR-Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JR-Lee/admin-end/issues"
+  },
+  "homepage": "https://github.com/JR-Lee/admin-end#readme",
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/koa": "^2.13.0",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-router": "^7.4.1",
+    "@types/koa-static": "^4.0.1",
+    "@types/mongoose": "^5.10.3",
+    "ts-node-dev": "^1.1.1",
+    "typescript": "^4.1.5"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.0.0",
+    "koa-static": "^5.0.0",
+    "mongoose": "^5.11.17"
+  }
+}
