@@ -1,15 +1,33 @@
-import { Context, Next } from "koa"
 import jwt from "jsonwebtoken"
+import User from '../model/User'
 import { authConfig } from '../config/index'
-import db from "../db"
+import { AppContext } from "../types"
+import { encrypt } from "../utils"
 
-export default async (ctx: Context, next: Next) => {
+export interface LoginParam {
+  username: string;
+  password: string;
+}
+
+export default async (ctx: AppContext) => {
   const { username, password } = ctx.request.body
 
   if (!username || !password) throw(400)
-  // 数据库搜索用户信息
-  db
+  else {
+    // 邮箱及用户名都可登录
+    const user = await User.findOne({ $or: [{ mail: username }, { username }] })
 
-  const token = jwt.sign({ username }, authConfig.secret, { expiresIn: authConfig.expire })
-  ctx.success({ token })
+    if (!user) ctx.error(401, '用户不存在')
+    else {
+      // 判断密码正确性
+      const isRight = user.get('password') === encrypt(password)
+      if (!isRight) {
+        ctx.error(401, '密码错误')
+        return
+      }
+      
+      const token = jwt.sign({ userId: user._id }, authConfig.secret, { expiresIn: authConfig.expire })
+      ctx.success({ token })
+    }
+  }
 }

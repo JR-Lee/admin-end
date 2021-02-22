@@ -1,7 +1,7 @@
 import KoaRouter from 'koa-router'
 import { Auth } from '../middleware/index'
 import { Login, Register } from '../controller/index'
-import Blog from '../controller/Blog'
+import Blog from '../controller/blog'
 import { DefaultContext } from 'src/types'
 
 const router = new KoaRouter<{}, DefaultContext>()
@@ -13,7 +13,7 @@ router
   // 登录
   .post('/login', Login)
   // 注册
-  .post('register', Register)
+  .put('/register', Register)
   // 博客
   .get('/blog', Blog.get)
   .put('/blog', Blog.update)
