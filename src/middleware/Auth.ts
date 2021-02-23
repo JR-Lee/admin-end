@@ -3,14 +3,21 @@ import jwt from 'jsonwebtoken'
 import { authConfig } from '../config/index'
 
 // 白名单
-const whites: RegExp = /^\/api\/login$|^\/api\/register$/
+const list = [
+  '/user/login',
+  '/user/register',
+  '/verify-code/asign',
+  '/verify-code/verify'
+].map(item => '^/api' + item + '$')
+
+const whites: RegExp = new RegExp(list.join('|'))
 
 export default async (ctx: Context, next: Next) => {
   if (whites.test(ctx.path)) await next()
   else {
     const token = ctx.get('token')
 
-    if (!token) throw(401)
+    if (!token) ctx.error(401)
 
     try {
       const { username } = jwt.verify(token, authConfig.secret)as { username: '' }

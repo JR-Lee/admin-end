@@ -1,5 +1,7 @@
-import Auth from './auth'
+import auth from './auth'
+import apiFormat from './api-format'
 
 export {
-  Auth
+  auth,
+  apiFormat
 }

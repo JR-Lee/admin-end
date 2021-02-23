@@ -1,7 +1,7 @@
-import Login from './login'
-import Register from './register'
+import Verify from './verify'
+import User from './user'
 
 export {
-  Login,
-  Register
+  Verify,
+  User
 }
