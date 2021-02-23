@@ -9,7 +9,7 @@ export const mailConfig = {
   host: 'smtp.163.com',
   port: 465,
   user: '15099802136@163.com',
-  pass: 'Huawei12'
+  pass: ''
 }
 
 export const dbConfig = {
