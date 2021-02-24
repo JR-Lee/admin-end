@@ -22,8 +22,13 @@ class User {
           ctx.error(400, '密码错误')
           return
         }
-        
-        const token = jwt.sign({ userId: user._id }, authConfig.secret, { expiresIn: authConfig.expire })
+
+        const payload = {
+          id: user.get('_id'),
+          name: user.get('username')
+        }
+        const token = jwt.sign(payload, authConfig.secret, { expiresIn: authConfig.expire })
+
         ctx.success({ token })
       }
     }

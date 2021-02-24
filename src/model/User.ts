@@ -1,5 +1,4 @@
-import { Document, Schema } from "mongoose"
-import db from "../db"
+import mongoose, { Schema } from "mongoose"
 
 /**
  * username 用户名
@@ -56,6 +55,6 @@ const schema = new Schema({
   versionKey: false
 })
 
-const User = db.model('user', schema)
+const User = mongoose.model('user', schema)
 
 export default User

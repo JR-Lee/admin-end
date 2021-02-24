@@ -13,7 +13,7 @@ const apiFormat = async (ctx: Context, next: Next) => {
           message = '缺少参数'
           break
         case 401:
-          message = '无效令牌'
+          message = 'token 无效'
           break
         case 403:
           message = '无访问权限'
@@ -23,6 +23,7 @@ const apiFormat = async (ctx: Context, next: Next) => {
           break
         default:
           message = '未知错误'
+          break
       }
     }
     ctx.body = { code, message, data: null }
