@@ -13,8 +13,7 @@ const list = [
 const whites: RegExp = new RegExp(list.join('|'))
 
 export default async (ctx: Context, next: Next) => {
-  if (whites.test(ctx.path)) await next()
-  else {
+  if (!whites.test(ctx.path)) {
     const token = ctx.get('token')
 
     if (!token) ctx.error(401)
@@ -23,10 +22,11 @@ export default async (ctx: Context, next: Next) => {
       const { id, name } = jwt.verify(token, authConfig.secret) as { id: string, name: string }
       ctx.state.id = id
       ctx.state.name = name
-      await next()
     } catch (err) {
       const message = err.message === 'jwt expired' ? 'token 已过期' : 'token 无效'
       ctx.error(401, message)
     }
   }
+
+  await next()
 }

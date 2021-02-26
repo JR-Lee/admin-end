@@ -10,13 +10,10 @@ class Article {
   static async add(ctx: AppContext) {
     const { content, title, categoryId } = ctx.request.body
 
-    if (!content || !title || !categoryId) ctx.error(400)
-    else {
-      const { id: authorId, name: authorName } = ctx.state
-      const data = { authorId, authorName, content, title }
-      await ArticleModel.create(data)
-      ctx.success()
-    }
+    const { id: authorId, name: authorName } = ctx.state
+    const data = { authorId, authorName, title, content, categoryId }
+    await ArticleModel.create(data)
+    ctx.success()
   }
 
   static update() {

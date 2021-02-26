@@ -1,5 +1,6 @@
 import mailer from 'nodemailer'
 import { mailConfig } from '../config'
+import { logPretty } from '.'
 
 const { host, port, user, pass } = mailConfig
 
@@ -15,10 +16,12 @@ const transporter = mailer.createTransport({
 
 export const mailVerify = async () => {
   try {
+    logPretty.info('  正在尝试连接邮件服务器...  \n')
     await transporter.verify()
-    console.log('邮件服务器连接正常')
+    logPretty.success('  邮件服务器连接正常  \n')
   } catch (err) {
-    throw(new Error('邮件服务器连接异常：' + err.message))
+    logPretty.error('邮件服务器连接异常：' + err.message + '\n')
+    process.exit()
   }
 }
 

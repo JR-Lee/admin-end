@@ -8,8 +8,8 @@ export const serverConfig = {
 export const mailConfig = {
   host: 'smtp.163.com',
   port: 465,
-  user: '',
-  pass: ''
+  user: '15099802136@163.com',
+  pass: 'Huawei12'
 }
 
 export const dbConfig = {
@@ -20,7 +20,7 @@ export const dbConfig = {
 
 export const authConfig = {
   secret: 'onlyblog',
-  expire: 60 * 60 * 2 // token 有效期，单位 s
+  expire: 60 * 60 * 24 // token 有效期，单位 s
 }
 
 export const verifyCodeConfig = {
