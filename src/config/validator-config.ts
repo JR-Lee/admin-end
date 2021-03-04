@@ -1,118 +1,147 @@
 import { RuleItem } from "async-validator"
 
-export interface TypeI {
+export interface ParamType {
   [type: string]: {
     [prop: string]: RuleItem | RuleItem[];
   }
 }
 
 export interface ValidateConfig {
-  [path: string]: {
-    [method: string]: TypeI;
+  [name: string]: ParamType;
+}
+
+const string = (name: string): RuleItem => {
+  return { type: 'string', message: `参数 ${name} 应为 string` }
+}
+
+const required = (name: string): RuleItem => {
+  return { required: true, message: `缺少参数 ${name}` }
+}
+
+const maxlength = (name: string, len: number): RuleItem => {
+  return { max: len, message: `参数 ${name} 应小于 ${len} 个字符` }
+}
+
+const mail = (name: string = 'mail'): RuleItem => {
+  return {
+    pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+    message: `参数 ${name} 格式不正确`
   }
 }
 
-const articleConfig: TypeI = {
-  body: {
-    title: [
-      { type: 'string', required: true, message: '缺少参数 title' },
-      { max: 20, message: '参数 title 应小于 20 个字数' }
-    ],
-    content: [
-      { type: 'string', required: true, message: '缺少参数 content' },
-      { max: 10000, message: '参数 content 应小于 10000 个字数' }
-    ],
-    categoryId: [
-      { type: 'string', required: true, message: '缺少参数 categoryId' }
-    ]
+const password = (name: string = 'password'): RuleItem => {
+  return {
+    pattern: /^.*(?=.{8,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*$/,
+    message: `参数 ${name} 应为 8 - 32 位包含大小写字母及数字的字符串`
+  }
+}
+
+const timestamp = (name: string): RuleItem => {
+  return {
+    type: 'integer',
+    message: `参数 ${ name } 应为有效时间戳`,
+    transform: val => val ? Number(val) : val
+  }
+}
+
+const bool = (name: string): RuleItem => {
+  return {
+    type: 'boolean',
+    message: `参数 ${name} 应为布尔值`,
+    transform: val => Boolean(val)
+  }
+}
+
+const number = (name: string): RuleItem => {
+  return {
+    type: 'number',
+    message: `参数 ${name} 应为数字`,
+    transform: val => val ? Number(val) : val
   }
 }
 
 const validateConfig: ValidateConfig = {
-  /** 新增（put）、编辑文章（post） */
-  '/api/article': {
-    put: {
-      body: {
-        title: [
-          { required: true, message: '缺少参数 title' },
-          { max: 20, message: '参数 title 应小于 20 个字数' }
-        ],
-        content: [
-          { required: true, message: '缺少参数 content' },
-          { max: 10000, message: '参数 content 应小于 10000 个字数' }
-        ],
-        categoryId: [
-          { required: true, message: '缺少参数 categoryId' }
-        ]
-      }
-    },
-    post: {
-      body: {
-        title: [
-          { max: 20, message: '参数 title 应小于 20 个字数' }
-        ],
-        content: [
-          { max: 10000, message: '参数 content 应小于 10000 个字数' }
-        ]
-      }
-    }
-  },
-
   /** 用户登录 */
-  '/api/user/login': {
-    post: {
-      body: {
-        username: { required: true, message: '缺少参数 username' },
-        password: { required: true, message: '缺少参数 password' }
-      }
+  login: {
+    body: {
+      username: required('username'),
+      password: required('password')
     }
   },
 
   /** 用户注册 */
-  '/api/user/register': {
-    put: {
-      body: {
-        username: [
-          { required: true, message: '缺少参数 username' },
-          { max: 20, message: '参数 username 应小于 20 个字数' }
-        ],
-        password: [
-          { required: true, message: '缺少参数 password' },
-          {
-            pattern: /^.*(?=.{8,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*$/,
-            message: '参数 password 应为 8 - 32 位包含大小写字母及数字的字符串'
-          }
-        ],
-        mail: [
-          { required: true, message: '缺少参数 mail' },
-          {
-            pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
-            message: '参数 mail 格式不正确'
-          }
-        ],
-        code: { required: true, message: '缺少参数 code' }
-      }
+  register: {
+    body: {
+      username: [ required('username'), maxlength('username', 20) ],
+      password: [ required('password'), password() ],
+      mail: [ required('mail'), mail() ],
+      code: required('code')
     }
   },
-  '/api/verify-code/asign': {
-    post: {
-      body: {
-        mail: [
-          { required: true, message: '缺少参数 mail' },
-          {
-            pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
-            message: '参数 mail 格式不正确'
-          }
-        ]
-      }
+
+  /** 更改密码 */
+  change: {
+    body: {
+      password: [ required('password'), password() ]
     }
   },
-  '/api/verify-code/verify': {
-    post: {
-      body: {
-        mail: { required: true, message: '缺少参数 mail' },
-        code: { required: true, message: '缺少参数 code' }
-      }
+
+
+  /** 获取验证码 */
+  asignCode: {
+    body: {
+      mail: [ required('mail'), mail()]
+    }
+  },
+
+  /** 校验验证码 */
+  verifyCode: {
+    body: {
+      mail: required('mail'),
+      code: required('code')
+    }
+  },
+
+  /** 获取文章 */
+  getArticle: {
+    query: {
+      categoryId: string('categoryId'),
+      startTime: timestamp('startTime'),
+      endTime: timestamp('endTime'),
+      hidden: number('hidden')
+    }
+  },
+
+  /** 新增文章 */
+  putArticle: {
+    body: {
+      title: [ string('title'), required('title'), maxlength('title', 100) ],
+      content: [ required('content'), maxlength('content', 10000) ],
+      categoryId: required('categoryId')
+    },
+  },
+
+  /** 修改文章 */
+  postArticle: {
+    body: {
+      title: [ required('title'), maxlength('title', 40) ],
+      content: [ required('content'), maxlength('content', 10000) ]
+    }
+  },
+
+  /** 新增分类 */
+  putCategory: {
+    body: {
+      name: [ required('name'), maxlength('name', 20) ],
+      remark: maxlength('remark', 200)
+    }
+  },
+
+  /** 修改分类 */
+  postCategory: {
+    body: {
+      name: maxlength('name', 20),
+      remark: maxlength('remark', 200)
     }
   }
 }

@@ -1,4 +1,4 @@
-import Koa, { Context, Next } from 'koa'
+import Koa from 'koa'
 import bodyparser from 'koa-bodyparser'
 import { serverConfig } from './src/config'
 import { DefaultContext } from './src/types'
@@ -13,7 +13,7 @@ import DBconnect from './src/db'
   await DBconnect()
 
   /** 邮件服务器连通性检测 */
-  // await mailVerify()
+  await mailVerify()
 
   new Koa<{}, DefaultContext>()
     /** 统一接口格式 */
@@ -24,8 +24,21 @@ import DBconnect from './src/db'
       try {
         await next()
       } catch (err) {
-        if (err.name === 'ApiError') logPretty.warning('  Api 错误信息：' + err.message + '\n')
-        else logPretty.error('服务器错误信息：' + err)
+        let message = err.message
+
+        switch (err.name) {
+          case 'ApiError':
+            logPretty.warning('  Api 错误信息：' + message + '\n')
+            break
+          case 'CastError':
+            logPretty.warning('  mongoose 查询错误：' + message + '\n')
+            ctx.body = { code: 400, message: '参数错误', data: null }
+            break
+          default:
+            logPretty.error('未知错误：' + message + '\n')
+            ctx.body = { code: 0, message, data: null }
+            break
+        }
       }
     })
 
@@ -34,9 +47,6 @@ import DBconnect from './src/db'
 
     /** body 解析 */
     .use(bodyparser())
-
-    /** 参数校验 */
-    .use(validateParam)
 
     /** 路由 */
     .use(router.routes())

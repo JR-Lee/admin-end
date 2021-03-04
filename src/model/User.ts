@@ -1,4 +1,5 @@
-import mongoose, { Schema } from "mongoose"
+import { model, Schema, SchemaDefinition } from "mongoose"
+import schemaOptions from "../config/schema-options"
 
 /**
  * username 用户名
@@ -9,7 +10,7 @@ import mongoose, { Schema } from "mongoose"
  * is_admin 是否管理员 -- 0：否  1：是
  * status 用户状态 -- 0：禁用  1：正常  2: 待审核
  */
-const schema = new Schema({
+const define: SchemaDefinition = {
   username: {
     type: String,
     required: true,
@@ -47,14 +48,11 @@ const schema = new Schema({
   status: {
     type: Number,
     default: 2
-  },
-  createTime: { type: Number, default: Date.now() },
-  updateTime: { type: Number, default: Date.now() }
-}, {
-  collection: 'user',
-  versionKey: false
-})
+  }
+}
 
-const User = mongoose.model('user', schema)
+const schema = new Schema(define, schemaOptions)
+
+const User = model('user', schema, 'user')
 
 export default User

@@ -13,7 +13,9 @@ const list = [
 const whites: RegExp = new RegExp(list.join('|'))
 
 export default async (ctx: Context, next: Next) => {
-  if (!whites.test(ctx.path)) {
+  const { path } = ctx
+
+  if (!whites.test(path)) {
     const token = ctx.get('token')
 
     if (!token) ctx.error(401)

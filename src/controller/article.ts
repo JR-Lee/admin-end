@@ -1,23 +1,61 @@
-import ArticleModel from "../model/article"
-import { AppContext } from "src/types"
+import { isBoolean } from "../utils"
+import { ArticleModel } from "../model"
+import { AppContext } from "../types"
 
 class Article {
   static async get(ctx: AppContext) {
-    const res = await ArticleModel.find()
+    const { _id } = ctx.params
+
+    let res
+
+    if (_id) res = await ArticleModel.findById(_id)
+    else {
+      const { categoryId, startTime = 0, endTime = Date.now(), hidden } = ctx.request.query
+
+      const factor = []
+
+      if (categoryId) factor.push({ categoryId })
+      if (hidden) factor.push({ hidden })
+
+      res = await ArticleModel.find({
+        $and: [
+          {
+            $and: [
+              { createTime: { $gt: startTime } },
+              { createTime: { $lt: endTime } }
+            ] 
+          },
+          ...factor
+        ]
+      })
+    }
+
     ctx.success(res)
   }
 
   static async add(ctx: AppContext) {
-    const { content, title, categoryId } = ctx.request.body
+    const { body } = ctx.request
 
     const { id: authorId, name: authorName } = ctx.state
-    const data = { authorId, authorName, title, content, categoryId }
-    await ArticleModel.create(data)
+
+    await ArticleModel.create({ ...body, authorId, authorName })
     ctx.success()
   }
 
-  static update() {
-    return true
+  static async update(ctx: AppContext) {
+    const { _id } = ctx.params
+
+    await ArticleModel.updateOne({ _id }, { ...ctx.request.body, updateTime: Date.now() })
+
+    ctx.success()
+  }
+
+  static async delete(ctx: AppContext) {
+    const { _id } = ctx.params
+
+    await ArticleModel.deleteOne({ _id })
+
+    ctx.success()
   }
 }
 
