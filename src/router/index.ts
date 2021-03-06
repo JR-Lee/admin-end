@@ -1,5 +1,5 @@
 import KoaRouter from 'koa-router'
-import { Verify, User, Article, Category } from '../controller'
+import { Verify, User, Article, Category, Upload } from '../controller'
 import { DefaultContext } from '../types'
 import { validateParam } from '../middleware'
 
@@ -19,6 +19,12 @@ router
 
   /** 注册 */
   .put('/user/register', validateParam('register'), User.register)
+
+  /** 获取用户信息 */
+  .get('/user/user-info', User.getUserInfo)
+
+  /** 修改用户信息 */
+  .post('/user/user-info', User.updateUserInfo)
 
   /** 更改密码 */
   .post('/user/change-password', validateParam('change'), User.change)
@@ -46,5 +52,8 @@ router
 
   /** 删除分类 */
   .delete('/category/:_id', Category.delete)
+
+  /** 上传文件 */
+  .put('/upload/avatar', Upload.instance.single('avatar'), Upload.fallback)
 
 export default router

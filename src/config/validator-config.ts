@@ -48,7 +48,7 @@ const bool = (name: string): RuleItem => {
   return {
     type: 'boolean',
     message: `参数 ${name} 应为布尔值`,
-    transform: val => Boolean(val)
+    transform: val => val ? Boolean(val) : val
   }
 }
 
@@ -85,7 +85,6 @@ const validateConfig: ValidateConfig = {
       password: [ required('password'), password() ]
     }
   },
-
 
   /** 获取验证码 */
   asignCode: {

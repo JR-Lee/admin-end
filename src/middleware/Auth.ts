@@ -21,8 +21,8 @@ export default async (ctx: Context, next: Next) => {
     if (!token) ctx.error(401)
 
     try {
-      const { id, name } = jwt.verify(token, authConfig.secret) as { id: string, name: string }
-      ctx.state.id = id
+      const { _id, name } = jwt.verify(token, authConfig.secret) as { _id: string, name: string }
+      ctx.state._id = _id
       ctx.state.name = name
     } catch (err) {
       const message = err.message === 'jwt expired' ? 'token 已过期' : 'token 无效'

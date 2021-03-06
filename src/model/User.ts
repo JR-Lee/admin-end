@@ -5,6 +5,7 @@ import schemaOptions from "../config/schema-options"
  * username 用户名
  * password 密码
  * mail 邮箱
+ * nickname 昵称
  * avatar 头像 uri
  * gender 性别 -- 0：男  1：女  2：未知
  * is_admin 是否管理员 -- 0：否  1：是
@@ -30,7 +31,11 @@ const define: SchemaDefinition = {
       message: '参数 mail 格式错误'
     }
   },
-  avatar: String,
+  nickname: String,
+  avatar: {
+    type: String,
+    default: 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1316245513,2278546847&fm=26&gp=0.jpg'
+  },
   gender: {
     type: Number,
     default: 2,
@@ -48,11 +53,11 @@ const define: SchemaDefinition = {
   status: {
     type: Number,
     default: 2
-  }
+  },
+  phone: String,
+  remark: String
 }
 
 const schema = new Schema(define, schemaOptions)
 
-const User = model('user', schema, 'user')
-
-export default User
+export default model('user', schema, 'user')

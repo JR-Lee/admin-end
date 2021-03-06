@@ -4,9 +4,9 @@ import { authConfig } from '../config/index'
 import { AppContext } from "../types"
 import { encrypt } from "../utils"
 import VerifyCode from "../utils/verify-code"
-import { Document } from "mongoose"
 
 class User {
+  /** 登录 */
   static async login(ctx: AppContext) {
     const { username, password } = ctx.request.body
 
@@ -28,7 +28,7 @@ class User {
       }
 
       const payload = {
-        id: user.get('_id'),
+        _id: user.get('_id'),
         name: user.get('username')
       }
       const token = jwt.sign(payload, authConfig.secret, { expiresIn: authConfig.expire })
@@ -37,6 +37,7 @@ class User {
     }
   }
 
+  /** 注册 */
   static async register(ctx: AppContext) {
     const { username, password, mail, code } = ctx.request.body
   
@@ -59,8 +60,9 @@ class User {
     }
   }
 
+  /** 更改密码 */
   static async change(ctx: AppContext) {
-    const { id: _id } = ctx.state
+    const { _id } = ctx.state
     const password = encrypt(ctx.request.body.password)
 
     const currentPassword = (await UserModel.findById(_id))?.get('password')
@@ -68,6 +70,31 @@ class User {
     if (password === currentPassword) ctx.error(400, '不能更改为与当前密码相同的密码')
 
     await UserModel.updateOne({ _id }, { password })
+    ctx.success()
+  }
+
+  /** 获取用户信息 */
+  static async getUserInfo(ctx: AppContext) {
+    const { _id } = ctx.state
+
+    const user = await UserModel.findById(_id)
+
+    if (!user) ctx.error(401, '无效用户 _id')
+
+    const res = user?.toJSON() as any
+
+    delete res.password
+
+    ctx.success(res)
+  }
+
+  /** 修改用户信息 */
+  static async updateUserInfo(ctx: AppContext) {
+    const { _id } = ctx.state
+    const { avatar, nickname, phone, gender, remark } = ctx.request.body
+
+    await UserModel.findByIdAndUpdate(_id, { avatar, nickname, phone, gender, remark })
+
     ctx.success()
   }
 }

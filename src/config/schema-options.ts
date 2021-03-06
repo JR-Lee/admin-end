@@ -11,9 +11,9 @@ const schemaOptions: SchemaOptions = {
     transform: (doc, ret) => {
       ret.createTime = ret.createTime.valueOf()
       ret.updateTime = ret.updateTime.valueOf()
-
       return ret
     }
   }
 }
+
 export default schemaOptions

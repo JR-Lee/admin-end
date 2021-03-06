@@ -36,7 +36,7 @@ class Article {
   static async add(ctx: AppContext) {
     const { body } = ctx.request
 
-    const { id: authorId, name: authorName } = ctx.state
+    const { _id: authorId, name: authorName } = ctx.state
 
     await ArticleModel.create({ ...body, authorId, authorName })
     ctx.success()

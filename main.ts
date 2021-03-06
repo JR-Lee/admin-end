@@ -1,14 +1,15 @@
 import Koa from 'koa'
 import bodyparser from 'koa-bodyparser'
+import serve from 'koa-static'
 import { serverConfig } from './src/config'
 import { DefaultContext } from './src/types'
-import { apiFormat, auth, validateParam } from './src/middleware'
+import { apiFormat, auth } from './src/middleware'
 import { mailVerify } from './src/utils/send-mail'
 import { logPretty } from './src/utils'
 import router from './src/router'
 import DBconnect from './src/db'
 
-(async () => {
+;(async () => {
   /** 连接数据库 */
   await DBconnect()
 
@@ -36,11 +37,14 @@ import DBconnect from './src/db'
             break
           default:
             logPretty.error('未知错误：' + message + '\n')
-            ctx.body = { code: 0, message, data: null }
+            ctx.body = { code: 0, message: '未知错误', data: null }
             break
         }
       }
     })
+
+    /** 静态文件 */
+    .use(serve('./public'))
 
     /** 身份验证 */
     .use(auth)

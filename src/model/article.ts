@@ -1,5 +1,5 @@
-import { model, Schema, SchemaDefinition, SchemaOptions } from "mongoose";
-import schemaOptions from "../config/schema-options";
+import { model, Schema, SchemaDefinition } from "mongoose"
+import schemaOptions from "../config/schema-options"
 
 const define: SchemaDefinition = {
   authorName: String,
